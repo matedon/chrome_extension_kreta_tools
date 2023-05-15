@@ -1,12 +1,22 @@
-// This is the service worker script, which executes in its own context
-// when the extension is installed or refreshed (or when you access its console).
-// It would correspond to the background script in chrome extensions v2.
-
-console.log("This prints to the console of the service worker (background script)")
+// background.js manifest v2 to v3 replacement!
 
 // Importing and using functionality from external files is also possible.
 importScripts('service-worker-utils.js')
 
-// If you want to import a file that is deeper in the file hierarchy of your
-// extension, simply do `importScripts('path/to/file.js')`.
-// The path should be relative to the file `manifest.json`.
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+    if (request.message == 'console_log') {
+        console.log(request.message)
+    }
+})
+
+/*
+chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    // Execute script in the current tab
+    chrome.scripting.executeScript({
+        target: { tabId: tabs[0].id },
+        //executeScript doesn't work with extension files
+        //Error: Cannot access a chrome:// URL
+        //files: [ "inject/data.bridge.js" ]
+    })
+})
+*/

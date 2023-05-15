@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "eKretaMin - Chrome Extension for E-Kreta",
     "description": "Unofficial Tools for e-kreta.hu users and administrators. When you use this app, you are responsible for any harm it may cause and the developer is not liable!",
-    "version": "0.71.1",
+    "version": "0.71.11",
     "icons": {
         "16": "logo/logo-16.png",
         "48": "logo/logo-48.png",
@@ -13,7 +13,11 @@
         "default_title": "Menu",
         "default_popup": "popup/popup.html"
     },
-    "permissions": [],
+    "permissions": [
+        "storage",
+        "scripting",
+        "activeTab"
+    ],
     "host_permissions": [
         "*://*/*"
     ],
@@ -22,10 +26,20 @@
     },
     "web_accessible_resources": [{
         "matches": ["<all_urls>"],
-        "resources": ["inject/inject.html", "inject/inject.css"]
+        "resources": [
+            "inject/inject.html",
+            "inject/inject.css",
+            "inject/min.css",
+            "inject/data.bridge.js"
+        ]
     }],
     "content_scripts": [{
-        "js": ["scripts/jquery.js","scripts/foreground.js"],
+        "run_at": "document_idle",
+        "js": [
+            "scripts/jquery.js",
+            "scripts/jquery.initalize.js",
+            "scripts/foreground.js"
+        ],
         "matches": ["https://*.e-kreta.hu/*"]
     }]
 }

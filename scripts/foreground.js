@@ -1,14 +1,7 @@
 /*!
- * https://github.com/adampietrasiak/jquery.initialize
- *
- * Copyright (c) 2015-2016 Adam Pietrasiak
- * Released under the MIT license
+ * Required:
  * https://github.com/pie6k/jquery.initialize/blob/master/LICENSE
- *
- * This is based on MutationObserver
- * https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
  */
-!function(e){"use strict";var t=[" ",">","+","~"],i=["+","~"],r=["ATTR","PSEUDO","ID","CLASS"];Element.prototype.matches||(Element.prototype.matches=Element.prototype.matchesSelector||Element.prototype.webkitMatchesSelector||Element.prototype.mozMatchesSelector||Element.prototype.msMatchesSelector);var n=function(n,o,a){this.selector=n.trim(),this.callback=o,this.options=a,function(n){if(!e.find.tokenize)return n.isCombinatorial=!0,n.isFraternal=!0,void(n.isComplex=!0);n.isCombinatorial=!1,n.isFraternal=!1,n.isComplex=!1;for(var o=e.find.tokenize(n.selector),a=0;a<o.length;a++)for(var s=0;s<o[a].length;s++)-1!=t.indexOf(o[a][s].type)&&(n.isCombinatorial=!0),-1!=i.indexOf(o[a][s].type)&&(n.isFraternal=!0),-1!=r.indexOf(o[a][s].type)&&(n.isComplex=!0)}(this)},o=[];o.initialize=function(t,i,r){var o=[],a=function(){-1==o.indexOf(this)&&(o.push(this),e(this).each(i))};e(r.target).find(t).each(a);var s=new n(t,a,r);this.push(s);var l=new MutationObserver((function(t){for(var i=[],r=0;r<t.length;r++)if("attributes"==t[r].type&&(t[r].target.matches(s.selector)&&i.push(t[r].target),s.isFraternal?i.push.apply(i,t[r].target.parentElement.querySelectorAll(s.selector)):i.push.apply(i,t[r].target.querySelectorAll(s.selector))),"childList"==t[r].type)for(var n=0;n<t[r].addedNodes.length;n++)t[r].addedNodes[n]instanceof Element&&(t[r].addedNodes[n].matches(s.selector)&&i.push(t[r].addedNodes[n]),s.isFraternal?i.push.apply(i,t[r].addedNodes[n].parentElement.querySelectorAll(s.selector)):i.push.apply(i,t[r].addedNodes[n].querySelectorAll(s.selector)));for(var o=0;o<i.length;o++)e(i[o]).each(s.callback)})),c={childList:!0,subtree:!0,attributes:s.isComplex};return l.observe(r.target,r.observer||c),l},e.fn.initialize=function(t,i){if(console.warn("jQuery.initialiaze: Deprecated API, see: https://github.com/pie6k/jquery.initialize/issues/6 and https://api.jquery.com/selector/"),void 0===this.selector)throw console.error("jQuery.initialiaze: $.fn.initialize() is not supported in your version of jQuery. Use $.initialize() instead."),new Error("jQuery.initialiaze: .selector is removed in jQuery versions >= 3.0");return o.initialize(this.selector,t,e.extend({},e.initialize.defaults,i))},e.initialize=function(t,i,r){return o.initialize(t,i,e.extend({},e.initialize.defaults,r))},e.initialize.defaults={target:document.documentElement,observer:null}}(jQuery);
 
 let obs = [] // array for $.initialize.disconnect
 const fnObsDisconnect = function () {
@@ -34,118 +27,177 @@ const fnObsRow = function(sel, fn, delay) {
 
 console.log('KRETA TOOLS - DELETE ALL')
 
-const snipClass = 'snip-ktxc9364'
-const snipClassTb = snipClass + '-toolbar'
-const snipClassTbClr = snipClassTb + '-btn-clr'
-const snipClassTbDel = snipClassTb + '-btn-del'
-const snipClassTbStop = snipClassTb + '-btn-stop'
-const snipClassTbClose = snipClassTb + '-btn-close'
-const snipClassTbBtnAct = snipClassTb + '-btn-active'
-const snipClassTbNap = snipClassTb + '-btn-nap'
-const snipClassTbFil = snipClassTb + '-filter'
-const snipClassTbNth = snipClassTb + '-nth'
-const snipClassTbFind = snipClassTb + '-find'
-const snipClassTbTop = snipClass + '-topic'
-const snipClassTbPres = snipClass + '-presence'
-const snipClassTbDone = snipClass + '-done'
-const snipClassTbVal = snipClassTb + '-kij'
-const snipClassTbDay = snipClassTb + '-day'
-const snipClassTbDays = snipClassTb + '-days'
-const snipClassCell = snipClass + '-cell'
-const snipIdStyle = snipClass + '-style'
+const swVersion = 'eKretaMinSett_' + chrome.runtime.getManifest().version
+chrome.storage.local.get(swVersion, function (sett) {
+    console.log(swVersion, sett)
+    if (sett == null || sett == undefined) {
+        console.log(swVersion, 'chrome.storage.local.get EMPTY')
+    }
+    fnModSet(sett[swVersion])
+})
 
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+    if (request.message == "console_log") {
+        console.log(request.data)
+    }
+    if (request.message == "fnModSet") {
+        console.log(request.message, request.data)
+        fnModSet(request.data)
+    }
+})
+
+/*
 $().ready(function () {
-    console.log('ready!')
     $.ajax({
         'method' : 'GET',
-        'dataType' : 'html',
-        'url' : chrome.runtime.getURL('inject/inject.html'),
+        'url' : chrome.runtime.getURL('inject/data.bridge.js'),
         'success' : function (res) {
-            console.log(res)
-            $('.' + snipClassTb).remove()
-            $('body').append(res)
-        }
-    })
-    $.ajax({
-        'method' : 'GET',
-        'dataType' : 'text/css',
-        'url' : chrome.runtime.getURL('inject/inject.css'),
-        'success' : function (res) {
-            console.log(res)
-            $('#' + snipIdStyle).remove()
-            $('body').append('<style id="' + snipIdStyle + '">' + res + '</style>')
-            fnMain()
+            $('body').append('<script>' + res + '</script>')
+            fnToolbar()
         }
     })
 })
+*/
 
-const fnMain = function () {
-    const $snip = $('.' + snipClassTb)
-    $snip.find('.' + snipClassTbStop).on('click', function () {
+fnModSet = function (sett) {
+    if (sett == null || sett == undefined) {
+        sett = {}
+    }
+    if (sett && sett.setToolbar) {
+        $.ajax({
+            'method' : 'GET',
+            'dataType' : 'html',
+            'url' : chrome.runtime.getURL('inject/inject.html'),
+            'success' : function (res) {
+                $('.' + sn.cs.Tb).remove()
+                $('body').append(res)
+            }
+        })
+        $.ajax({
+            'method' : 'GET',
+            'url' : chrome.runtime.getURL('inject/inject.css'),
+            'success' : function (res) {
+                $('#' + sn.id.Style).remove()
+                $('body').append('<style id="' + sn.id.Style + '">' + res + '</style>')
+                fnToolbar()
+            }
+        })
+    } else {
+        $('.' + sn.cs.Tb).remove()
+        $('#' + sn.id.Style).remove()
+    }
+    if (sett && sett.setCssPro) {
+        $.ajax({
+            'method' : 'GET',
+            'url' : chrome.runtime.getURL('inject/min.css'),
+            'success' : function (res) {
+                $('#' + sn.id.Min).remove()
+                $('body').append('<style id="' + sn.id.Min + '">' + res + '</style>')
+            }
+        })
+    } else {
+        $('#' + sn.id.Min).remove()
+    }
+}
+
+const sn = {
+    cs: {},
+    id: {}
+}
+sn.cs.Base = 'snip-ktxc9364'
+sn.cs.Tb = sn.cs.Base + '-toolbar'
+sn.cs.TbClr = sn.cs.Tb + '-btn-clr'
+sn.cs.TbDel = sn.cs.Tb + '-btn-del'
+sn.cs.TbStop = sn.cs.Tb + '-btn-stop'
+sn.cs.TbClose = sn.cs.Tb + '-btn-close'
+sn.cs.TbBtnAct = sn.cs.Tb + '-btn-active'
+sn.cs.TbNap = sn.cs.Tb + '-btn-nap'
+sn.cs.TbFil = sn.cs.Tb + '-filter'
+sn.cs.TbNth = sn.cs.Tb + '-nth'
+sn.cs.TbFind = sn.cs.Tb + '-find'
+sn.cs.TbTop = sn.cs.Base + '-topic'
+sn.cs.TbPres = sn.cs.Base + '-presence'
+sn.cs.TbDone = sn.cs.Base + '-done'
+sn.cs.TbVal = sn.cs.Tb + '-kij'
+sn.cs.TbDay = sn.cs.Tb + '-day'
+sn.cs.TbDays = sn.cs.Tb + '-days'
+sn.cs.Cell = sn.cs.Base + '-cell'
+sn.id.Style = sn.cs.Base + '-style'
+sn.id.Min = sn.cs.Base + '-style-min'
+
+const fnToolbar = function () {    
+    const $snip = $('.' + sn.cs.Tb)
+    $snip.find('.' + sn.cs.TbStop).on('click', function () {
         fnObsDisconnect()
     })
-    $snip.find('.' + snipClassTbDays).on('click', function () {
-        $(this).toggleClass(snipClassTbBtnAct)
+    $snip.find('.' + sn.cs.TbDays).on('click', function () {
+        $(this).toggleClass(sn.cs.TbBtnAct)
     })
-    $snip.find('.' + snipClassTbClr).on('click', function () {
+    $snip.find('.' + sn.cs.TbClr).on('click', function () {
         $snip.find(':input').val('')
-        $snip.find('.' + snipClassTbDays).removeClass(snipClassTbBtnAct)
-        $('.fc-time-grid-event').removeClass(snipClassCell)
+        $snip.find('.' + sn.cs.TbDays).removeClass(sn.cs.TbBtnAct)
+        $('.fc-time-grid-event').removeClass(sn.cs.Cell)
     }).trigger('click')
-    $snip.find('.' + snipClassTbFind).on('click', function () {
+    $snip.find('.' + sn.cs.TbFind).on('click', function () {
         const $btn = $(this)
-        $snip.find('button').removeClass(snipClassCell)
-        $btn.addClass(snipClassCell)
+        $snip.find('button').removeClass(sn.cs.Cell)
+        $btn.addClass(sn.cs.Cell)
         findFilterOra()
     })
-    $snip.find('.' + snipClassTbDel).on('click', function () {
+    $snip.find('.' + sn.cs.TbDel).on('click', function () {
         const $btn = $(this)
-        $snip.find('button').removeClass(snipClassCell)
-        $btn.addClass(snipClassCell)
-        if (confirm('Delete ' + $('.fc-time-grid-event.' + snipClassCell).length + '?')) {
+        $snip.find('button').removeClass(sn.cs.Cell)
+        $btn.addClass(sn.cs.Cell)
+        if (confirm('Delete ' + $('.fc-time-grid-event.' + sn.cs.Cell).length + '?')) {
         delNextOra()
         }
     })
-    $snip.find('.' + snipClassTbNap).on('click', function () {
+    $snip.find('.' + sn.cs.TbNap).on('click', function () {
         const $btn = $(this)
-        $snip.find('button').removeClass(snipClassCell)
-        $btn.addClass(snipClassCell)
+        $snip.find('button').removeClass(sn.cs.Cell)
+        $btn.addClass(sn.cs.Cell)
         if (confirm('Naplóz ' + findFilterOra().length + '?')) {
         napNextOra()
         }
     })
-    $snip.find('.' + snipClassTbStop).on('click', function () {
+    $snip.find('.' + sn.cs.TbStop).on('click', function () {
         const $btn = $(this)
-        $('.fc-time-grid-event').removeClass(snipClassCell)
-        $snip.find('button').removeClass(snipClassCell)
-        $btn.addClass(snipClassCell)
+        $('.fc-time-grid-event').removeClass(sn.cs.Cell)
+        $snip.find('button').removeClass(sn.cs.Cell)
+        $btn.addClass(sn.cs.Cell)
     })
-    $snip.find('.' + snipClassTbClose).on('click', function () {
-        $('.' + snipClassTb).remove()
-        $('#' + snipIdStyle).remove()
-        $('.fc-time-grid-event').removeClass(snipClassCell)
+    $snip.find('.' + sn.cs.TbClose).on('click', function () {
+        $('.' + sn.cs.Tb).remove()
+        $('#' + sn.id.Style).remove()
+        $('.fc-time-grid-event').removeClass(sn.cs.Cell)
     })
 }
 
 
 const findFilterOra = function () {
-  let $mindenOra = $('.fc-title').closest('.fc-time-grid-event')
-  $mindenOra.removeClass(snipClassCell)
+  let $mindenOra = $('body').find('.fc-title').closest('.fc-time-grid-event')
+  $mindenOra.removeClass(sn.cs.Cell)
   let dayNums = []
-  $('.' + snipClassTbDays).each(function (nth) {
-    if ($(this).hasClass(snipClassTbBtnAct)) {
+  $('.' + sn.cs.TbDays).each(function (nth) {
+    if ($(this).hasClass(sn.cs.TbBtnAct)) {
       dayNums.push(nth)
     }
   })
-  let fil = $('.' + snipClassTbFil).val().toLowerCase()
-  const nthVal = $('.' + snipClassTbNth).val()
+  let fil = $('.' + sn.cs.TbFil).val().toLowerCase()
+  const nthVal = $('.' + sn.cs.TbNth).val()
   let nth = nthVal.length ? nthVal.split(',') : []
-  const noTema = $('.' + snipClassTbDone).val()[0]
+  const noTema = $('.' + sn.cs.TbDone).val()[0]
   const $orak = $mindenOra.filter(function () {
     const $ora = $(this)
+    console.log($ora)
     const oraData = $ora.data()
+    /**
+     * ERROR! Can not access page's original jQuery dataSet!
+     * Must FIX!
+     */
+    console.log(oraData)
     let ret = [false, false]
-    if (dayNums && dayNums.length) {
+    if (oraData.fcSeg && oraData.fcSeg.start && oraData.fcSeg.start._i && dayNums && dayNums.length) {
       const dayStart = (new Date(oraData.fcSeg.start._i)).getDay() - 1
       if (dayNums.indexOf(dayStart) > -1) {
         ret[0] = true
@@ -189,18 +241,18 @@ const findFilterOra = function () {
     })
     return ret_all
   })
-  return $orak.addClass(snipClassCell)
+  return $orak.addClass(sn.cs.Cell)
 }
 const delNextOra = function () {
   const $orak = findFilterOra()
   if ($orak.length == 0) {
-    $snip.find('.' + snipClassTbStop).trigger('click')
+    $snip.find('.' + sn.cs.TbStop).trigger('click')
     return false
   }
-  if ($snip.find('.' + snipClassTbStop).hasClass(snipClassCell)) {
+  if ($snip.find('.' + sn.cs.TbStop).hasClass(sn.cs.Cell)) {
     return false
   }
-  $snip.find('.' + snipClassTbVal).val($orak.length)
+  $snip.find('.' + sn.cs.TbVal).val($orak.length)
   const fctLen = $('.fc-title').length
   fnObsDisconnect()
   fnObsRow('#modOrarendiOraDeleteDay', function () {
@@ -221,26 +273,26 @@ const delNextOra = function () {
 const napNextOra = function () {
   const $orak = findFilterOra()
   if ($orak.length == 0) {
-    $snip.find('.' + snipClassTbStop).trigger('click')
+    $snip.find('.' + sn.cs.TbStop).trigger('click')
     return false
   }
-  if ($snip.find('.' + snipClassTbStop).hasClass(snipClassCell)) {
+  if ($snip.find('.' + sn.cs.TbStop).hasClass(sn.cs.Cell)) {
     return false
   }
-  $snip.find('.' + snipClassTbVal).val($orak.length)
+  $snip.find('.' + sn.cs.TbVal).val($orak.length)
   const fctLen = $orak.length
   fnObsDisconnect()
   fnObsRow('#tanoraMuveletWindow', function () {
     $dial = $(this)
     $dial.find('[name="Tema_input"]')
       .trigger('focusin')
-      .val($('.' + snipClassTbTop).val())
+      .val($('.' + sn.cs.TbTop).val())
       .trigger('keyup')
       .trigger('focusout')
-    if ($snip.find('.' + snipClassTbPres).val()[0] == '1') {
+    if ($snip.find('.' + sn.cs.TbPres).val()[0] == '1') {
       $dial.find('.mulasztasGridColumnHeaderJelen').trigger('click')
     }
-    if ($snip.find('.' + snipClassTbPres).val()[0] == '2') {
+    if ($snip.find('.' + sn.cs.TbPres).val()[0] == '2') {
       $dial.find('[data-inputparentgrid="MulasztasokNaplozasaGrid"]').each(function () {
         const $self = $(this)
         const $act = $self.find('.activebar')
