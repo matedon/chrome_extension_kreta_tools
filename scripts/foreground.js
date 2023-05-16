@@ -46,18 +46,25 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     }
 })
 
-/*
 $().ready(function () {
-    $.ajax({
-        'method' : 'GET',
-        'url' : chrome.runtime.getURL('inject/data.bridge.js'),
-        'success' : function (res) {
-            $('body').append('<script>' + res + '</script>')
-            fnToolbar()
-        }
-    })
+  /*
+  $.ajax({
+      'method' : 'GET',
+      'url' : chrome.runtime.getURL('inject/data.bridge.js'),
+      'success' : function (res) {
+          $('body').append('<script>' + res + '</script>')
+          fnToolbar()
+      }
+  })
+  */
+ /**
+  * Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'self' 'wasm-unsafe-eval'".
+  * Either the 'unsafe-inline' keyword, a hash ('sha256-OtJXBy1Ny7gaG+DX3UwPqX+ypJ+eLEKC9QSBdOMsJnc='),
+  * or a nonce ('nonce-...') is required to enable inline execution.
+  */
+  $('head').append(`<meta http-equiv="Content-Security-Policy" content="script-src 'sha256-yKTHWCN4NVADFo6sCmDTqz65VFdV9X20pg5OK2rXmAA=' 'wasm-unsafe-eval'">`)
 })
-*/
+
 
 fnModSet = function (sett) {
     if (sett == null || sett == undefined) {
@@ -112,6 +119,7 @@ sn.cs.TbStop = sn.cs.Tb + '-btn-stop'
 sn.cs.TbClose = sn.cs.Tb + '-btn-close'
 sn.cs.TbBtnAct = sn.cs.Tb + '-btn-active'
 sn.cs.TbNap = sn.cs.Tb + '-btn-nap'
+sn.cs.TbDev = sn.cs.Tb + '-btn-dev'
 sn.cs.TbFil = sn.cs.Tb + '-filter'
 sn.cs.TbNth = sn.cs.Tb + '-nth'
 sn.cs.TbFind = sn.cs.Tb + '-find'
@@ -170,6 +178,14 @@ const fnToolbar = function () {
         $('.' + sn.cs.Tb).remove()
         $('#' + sn.id.Style).remove()
         $('.fc-time-grid-event').removeClass(sn.cs.Cell)
+    })
+    $snip.find('.' + sn.cs.TbDev).on('click', function () {
+      const injectedCode = `
+      console.log('injectedCode')
+      `
+      var script = document.createElement("script");
+      script.textContent = injectedCode;
+      (document.head).appendChild(script);
     })
 }
 
